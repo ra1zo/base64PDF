@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image</title>
+</head>
+<body>
+<button onclick="downloadImage()">Download Image</button>
+
+<script>
+
+  function downloadImage(){
+
+    fetch("/downloadImage")
+            .then(response => response.text())
+            .then(encodedText => {
+              fetch("/decodeText",{
+                method:"POST",
+                body:encodedText
+              }).then(response => response.blob())
+                  .then(blob =>{
+                      const url = window.URL.createObjectURL(blob);
+                      const link = document.createElement("a");
+                      link.setAttribute("download","image.png");
+                      link.setAttribute("href",url)
+                      link.click()
+                  })
+            })
+
+
+  }
+
+
+
+</script>
+</body>
+</html>

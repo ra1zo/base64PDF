@@ -1,0 +1,33 @@
+<html>
+<head>
+  <title>Download PDF</title>
+  <script>
+    function downloadPdf() {
+      let userId = document.getElementById("userId").value
+      fetch("/download?userID="+userId)
+              .then(response => response.text())
+              .then(encodedText => {
+                fetch("/decode", {
+                  method: "POST",
+                  body: encodedText
+                })
+                        .then(response => response.blob())
+                        .then(blob =>{
+                          let bloburl = window.URL.createObjectURL(blob);
+                          let link = document.createElement("a");
+                          link.href=bloburl;
+                          link.click();
+                        })
+
+              });
+    }
+  </script>
+</head>
+<body>
+<form >
+  <label for="userId">Enter User ID:</label>
+  <input type="text" id="userId">
+</form>
+<button onclick="downloadPdf()">Download PDF</button>
+</body>
+</html>
