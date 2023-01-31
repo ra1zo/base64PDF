@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,19 +26,40 @@ public class Controller {
     return "download";
 }
 
+    @GetMapping("/tokenPage")
+    public String showTokenPage(){
+        return "TokenGeneration";
+    }
 
-    @GetMapping("/error")
-    public  String getErrorPage(){
-        return "error";
+    @GetMapping("/getToken")
+    public ResponseEntity<String> getToken(){
+        final String HARD_CODED_TOKEN = "secret_token";
+        return ResponseEntity.ok(HARD_CODED_TOKEN);
+    }
+
+
+//    @GetMapping("/error")
+//    public  String getErrorPage(){
+//        return "error";
+//    }
+
+    @GetMapping("/validate")
+    public ResponseEntity<Void> validate(@RequestHeader(name = "Authorization") String token, @RequestParam(name = "userID") String id ) throws GeneralSecurityException, IOException {
+        String userToken = ap.getSheetsToken(Integer.parseInt(id));
+        if (token == null || userToken==null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        else if(!userToken.equals(token)){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/download")
     @ResponseBody
     public String getText(@RequestParam(name = "userID") String id) throws GeneralSecurityException, IOException {
-        System.out.println("ahhahaha "+ id);
-        return ap.getSheetsData(Integer.valueOf(id));
+        return ap.getSheetsData(Integer.parseInt(id));
     }
-
 
     @PostMapping("/decode")
     public ResponseEntity<InputStreamResource> decodeText(@RequestBody String encodedText) {

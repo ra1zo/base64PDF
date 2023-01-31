@@ -42,4 +42,26 @@ public class ApiCall {
 
     }
 
+    public String getSheetsToken(int id) throws IOException, GeneralSecurityException {
+        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        final String spreadsheetId = "1UTp7A3PPeGGPA_udl06H1G--ZNawS_jF5vloYhNIK4A";
+        final String range = "Sheet1!A" + (id + 1) + ":D" + (id + 1);
+        Sheets service =
+                new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+                        .setApplicationName(APPLICATION_NAME)
+                        .build();
+        ValueRange response = service.spreadsheets().values()
+                .get(spreadsheetId, range)
+                .execute();
+        List<List<Object>> values = response.getValues();
+
+
+        List<Object> row = values.get(0);
+        if (row.size() > 3 && row.get(3) != null) {
+            return row.get(3).toString();
+        } else {
+            return null;
+        }
+
+    }
 }

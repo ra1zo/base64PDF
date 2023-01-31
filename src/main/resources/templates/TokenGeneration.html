@@ -1,0 +1,21 @@
+<html>
+<head>
+  <title>Token Generation</title>
+  <script>
+    function setToken() {
+      fetch("/getToken")
+              .then(response=> response.text())
+              .then(token=>{
+                sessionStorage.setItem("token",token);
+                alert("Session Created"+token)
+              })
+    }
+
+  </script>
+</head>
+<body>
+<button onclick="setToken()">Authorize User</button>
+<button onclick="window.location.href='/downloadPage'">Go to Invoice Download Page</button>
+
+</body>
+</html>
